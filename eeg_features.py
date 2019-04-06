@@ -24,7 +24,7 @@ x=raw.get_data()
 bins=[0.5,4,7,12,30]
 for i in range(0,x.shape[0]):
     
-    
+    # follow https://github.com/gilestrolab/pyrem/blob/master/scripts/pyeeg.py
     
     print(fisher_info(x[i],1,50)) #same as svd_entropy
     #print(svd_entropy(x[i],1,50)) # I don't know what the fucking numbers are
