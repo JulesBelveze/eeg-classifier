@@ -14,7 +14,7 @@ df = pd.DataFrame(columns=['File', 'Segment', 'Time_start', 'Time_end', 'Index_s
 time_segment = 180  # seconds - 3 min
 
 for file in range(1, 32):
-    raw_fname = '../real_EEG_data/' + str(file) + '.edf'
+    raw_fname = '/home/marina/Documents/DTU/Advanced machine learning/Project/Data/real_EEG_data/' + str(file) + '.edf'
     raw = mne.io.read_raw_edf(raw_fname, preload=True)
     data, times = raw[-1, -1:]
     total_time = float(times)
@@ -32,7 +32,7 @@ for file in range(1, 32):
                        ignore_index=True)
 
         fig = raw.plot(start=count_plot, duration=interval_plot, show=False);
-        path = '../real_EEG_data/eeg_plots/' + str(file) + ' segment ' + str(segment) + '.png'
+        path = '/home/marina/Documents/DTU/Advanced machine learning/Project/Data/eeg_plots/' + str(file) + ' segment ' + str(segment) + '.png'
         fig.savefig(path, quality=1)  # save the figure to file
         # fig.clf()
         # plt.close('all')
