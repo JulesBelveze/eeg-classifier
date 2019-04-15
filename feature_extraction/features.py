@@ -317,14 +317,16 @@ def autogressiveModelParameters(epoch):
 
 
 # ------------------------- Autoregression model- Burg Algorithm --------------------
+
 def autogressiveModelParametersBurg(labels):
     feature = []
     feature1 = []
     model_order = 3
     for i in range(14):
         AR, rho, ref = arburg(labels[i], model_order)
-        feature.append(AR);
-    for j in range(14):
+        feature.append(AR)
+
+    for j in range(len(feature)):
         for i in range(model_order):
             feature1.append(feature[j][i])
 
