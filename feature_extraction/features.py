@@ -117,14 +117,7 @@ def coeff_var(a):
 # ----------------- Skewness , 1st Difference Mean, 1st Difference Max --------------
 
 def skewness(arr):
-    data = arr
-    skew_array = np.zeros(len(data))  # Initialinling the array as all 0s
-    index = 0  # current cell position in the output array
-
-    for i in data:
-        skew_array[index] = sp.stats.skew(i, axis=0, bias=True)
-        index += 1  # updating the cell position
-    return np.sum(skew_array) / 14
+    return sp.stats.skew(arr, axis=0, bias=True)
 
 
 def first_diff_mean(arr):
