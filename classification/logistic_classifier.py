@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
@@ -30,20 +29,20 @@ if __name__ == '__main__':
     Y = df['labels_jules'].values
     X = df.drop('labels_jules', axis=1).values
 
-    # getting the needed features
+    # getting the most significant features and removing the others
     features_to_include = bonferonni_corr(X, Y)
-
     columns_to_include = df.columns[features_to_include].values
-    # X = df[columns_to_include].values
+    X = df[columns_to_include].values
 
+    # classification models
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
-
     clf = LogisticRegression(random_state=0, solver='lbfgs', multi_class='multinomial')
     clf.fit(X_train, Y_train)
-
     Y_hat = clf.predict(X_test)
-    target_names = ['bad', 'good']
 
+
+    # printing metrics
+    target_names = ['bad', 'good']
     print(classification_report(Y_test, Y_hat, target_names=target_names))
     print(confusion_matrix(Y_test, Y_hat))
-    print("Accuracy: %s" %accuracy_score(Y_test, Y_hat))
+    print("Accuracy: %s" % accuracy_score(Y_test, Y_hat))
