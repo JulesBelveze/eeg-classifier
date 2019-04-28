@@ -10,8 +10,8 @@ from sklearn.utils import shuffle
 from imblearn.over_sampling import SMOTE
 import sys
 
-sys.path.insert(0, "../dimension_reduction/")
-from dimension_reduction import bonferonni_corr
+sys.path.insert(0, "../feature_extraction/")
+from pca_by_class import remove_correlated
 
 
 def oversample_smote(X_train, y_train):
@@ -42,32 +42,26 @@ def main(args):
         accuracy_baseline = 0.5
         df = oversample(df)
 
-    C = 2
+    if args.reduce:
+        df = remove_correlated(df)
 
     X = df.drop('labels_jules', axis=1).values
     Y = df['labels_jules'].values
 
+    if args.smote:
+        accuracy_baseline = 0.5
+        X, Y = oversample_smote(X, Y)
+
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
 
-    if args.reduce:
-        features_to_include = bonferonni_corr(X, Y)
-        columns_to_include = df.columns[features_to_include].values
-        X = df[columns_to_include].values
-
     K = 5
     KF = KFold(n_splits=K, shuffle=True)
-
     error_test = np.zeros(K)
-
     k = 0
     for train_index, test_index in KF.split(X):
         X_train = X[train_index, :]
         Y_train = Y[train_index]
-
-        if args.smote:
-            accuracy_baseline = 0.5
-            X_train, Y_train = oversample_smote(X_train, Y_train)
 
         X_test = X[test_index, :]
         Y_test = Y[test_index]
