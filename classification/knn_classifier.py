@@ -14,10 +14,10 @@ sys.path.insert(0, "../feature_extraction/")
 from pca_by_class import remove_correlated
 
 
-def oversample_smote(X_train, y_train):
+def oversample_smote(X, y):
     sm = SMOTE(random_state=2)
-    X_train, y_train = sm.fit_sample(X_train, y_train)
-    return X_train, y_train
+    X, y = sm.fit_sample(X, y)
+    return X, y
 
 
 def main(args):

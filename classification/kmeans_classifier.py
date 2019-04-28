@@ -3,10 +3,10 @@ import numpy as np
 import warnings
 import argparse
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import KFold
-from sklearn.svm import SVC
+from sklearn.cluster import KMeans
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from sklearn.utils import shuffle
+from sklearn.metrics import confusion_matrix
 from imblearn.over_sampling import SMOTE
 import sys
 
@@ -20,27 +20,9 @@ def oversample_smote(X, y):
     return X, y
 
 
-def oversample(df):
-    count = df['labels_jules'].value_counts()
-    max_count = max(count)
-
-    df_bad = df[df['labels_jules'] == 0]
-    df_good_oversampled = df[df['labels_jules'] == 1].sample(n=max_count, replace=True)
-    df_oversampled = pd.concat([df_bad, df_good_oversampled])
-
-    return shuffle(df_oversampled)
-
-
 def main(args):
     df = pd.read_csv('../data/features_all_nochnnels.csv', index_col=['File', 'Segment'], sep=';')
     accuracy_baseline = df['labels_jules'].value_counts()[0] / sum(df['labels_jules'].value_counts())
-
-    if args.upsample:
-        if args.smote:
-            print("Incompatibility of --smote and --upsample flags")
-            sys.exit()
-        accuracy_baseline = 0.5
-        df = oversample(df)
 
     if args.reduce:
         df = remove_correlated(df)
@@ -55,36 +37,25 @@ def main(args):
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
 
-    K = 5
-    KF = KFold(n_splits=K, shuffle=True)
-    error_test = np.zeros(K)
-    k = 0
-    for train_index, test_index in KF.split(X):
-        X_train = X[train_index, :]
-        Y_train = Y[train_index]
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, Y, test_size=0.2, random_state=42)
 
-        X_test = X[test_index, :]
-        Y_test = Y[test_index]
+    kmeans = KMeans(n_clusters=2, random_state=0).fit(X_train)
 
-        clf = SVC()
-        clf.fit(X_train, Y_train)
+    Y_hat_train = kmeans.labels_
+    Y_hat_test = kmeans.predict(X_test)
 
-        Y_hat = clf.predict(X_test)
-        error_test[k] = accuracy_score(Y_test, Y_hat)
-
-        k += 1
-
-    print("Accuracy: %f / baseline: %f" % (np.mean(error_test), accuracy_baseline))
+    print("accuracy baseline: %f" %accuracy_baseline)
+    print(" \n--------- Training -----------")
+    print("Accuracy: %f" %accuracy_score(y_train, Y_hat_train))
+    print(confusion_matrix(y_train, Y_hat_train))
+    print(" \n----------- Test -------------")
+    print("Accuracy: %f" % accuracy_score(y_test, Y_hat_test))
+    print(confusion_matrix(y_test, Y_hat_test))
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--upsample',
-        type=bool,
-        default=False,
-        help='Setting to true will randomly upsample the minority class'
-    )
     parser.add_argument(
         '--reduce',
         type=bool,
