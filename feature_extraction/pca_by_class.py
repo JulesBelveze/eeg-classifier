@@ -26,7 +26,7 @@ if __name__ == '__main__':
     df = pd.read_csv('../data/features_standardized.csv', sep=';')
     Y = df.labels_jules.values  # Response
 
-    df = remove_correlated(df.drop('labels_jules'))
+    df = remove_correlated(df)
     classNames = ['Bad', 'Good']
 
     C = 2  # Number of classes
