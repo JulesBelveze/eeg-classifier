@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import warnings
 import argparse
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import scale
 from sklearn.model_selection import KFold
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
@@ -52,8 +52,7 @@ def main(args):
         accuracy_baseline = 0.5
         X, Y = oversample_smote(X, Y)
 
-    scaler = StandardScaler()
-    X = scaler.fit_transform(X)
+    X = scale(X)
 
     K = 5
     KF = KFold(n_splits=K, shuffle=True)

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import warnings
 import argparse
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import scale
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -34,8 +34,7 @@ def main(args):
         accuracy_baseline = 0.5
         X, Y = oversample_smote(X, Y)
 
-    scaler = StandardScaler()
-    X = scaler.fit_transform(X)
+    X = scale(X)
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, Y, test_size=0.2, random_state=42)

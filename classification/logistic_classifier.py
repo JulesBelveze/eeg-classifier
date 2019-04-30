@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import scale
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
@@ -33,6 +34,7 @@ if __name__ == '__main__':
     features_to_include = bonferonni_corr(X, Y)
     columns_to_include = df.columns[features_to_include].values
     X = df[columns_to_include].values
+    X = scale(X)
 
     # classification models
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, random_state=42)

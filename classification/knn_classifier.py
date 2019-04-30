@@ -3,7 +3,7 @@ import numpy as np
 import warnings
 import argparse
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import scale
 from sklearn.model_selection import KFold
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
@@ -34,8 +34,7 @@ def main(args):
         accuracy_baseline = 0.5
         X, Y = oversample_smote(X, Y)
 
-    scaler = StandardScaler()
-    scaler.fit(X, Y)
+    X = scale(X)
 
     K = 10
     KF = KFold(n_splits=K, shuffle=True)
