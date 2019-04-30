@@ -3,10 +3,11 @@ import numpy as np
 import warnings
 import argparse
 from sklearn.preprocessing import scale
-from sklearn.model_selection import KFold
-from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from sklearn.utils import shuffle
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 from imblearn.over_sampling import SMOTE
 import sys
 
@@ -37,26 +38,21 @@ def main(args):
 
     X = scale(X)
 
-    K = 5
-    KF = KFold(n_splits=K, shuffle=True)
-    error_test = np.zeros(K)
-    k = 0
-    for train_index, test_index in KF.split(X):
-        X_train = X[train_index, :]
-        Y_train = Y[train_index]
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, Y, test_size=0.2, random_state=42)
 
-        X_test = X[test_index, :]
-        Y_test = Y[test_index]
+    clf = RandomForestClassifier(n_estimators=300)
 
-        clf = SVC()
-        clf.fit(X_train, Y_train)
+    clf.fit(X_train, y_train)
 
-        Y_hat = clf.predict(X_test)
-        error_test[k] = accuracy_score(Y_test, Y_hat)
+    Y_hat_test = clf.predict(X_test)
 
-        k += 1
+    print("accuracy baseline: %f" % accuracy_baseline)
+    print(" \n----------- Test -------------")
+    print("Accuracy: %f" % accuracy_score(y_test, Y_hat_test))
+    print(confusion_matrix(y_test, Y_hat_test))
 
-    print("Accuracy: %f / baseline: %f" % (np.mean(error_test), accuracy_baseline))
+    print(classification_report(y_test, Y_hat_test, target_names=['bad', 'good']))
 
 
 def parse_arguments():

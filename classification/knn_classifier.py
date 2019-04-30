@@ -24,11 +24,12 @@ def main(args):
     df = pd.read_csv('../data/features_all_nochnnels.csv', index_col=['File', 'Segment'], sep=';')
     accuracy_baseline = df['labels_jules'].value_counts()[0] / sum(df['labels_jules'].value_counts())
 
-    if args.reduce:
-        df = remove_correlated(df)
-
-    X = df.drop('labels_jules', axis=1).values
     Y = df['labels_jules'].values
+
+    if args.reduce:
+        df = remove_correlated(df.drop("labels_jules", axis=1))
+
+    X = df.values
 
     if args.smote:
         accuracy_baseline = 0.5
