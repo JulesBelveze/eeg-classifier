@@ -29,8 +29,9 @@ def main(args):
 
     if args.reduce:
         df = remove_correlated(df.drop("labels_jules", axis=1))
-
-    X = df.values
+        X = df.values
+    else:
+        X = df.drop("labels_jules", axis=1).values
 
     if args.smote:
         accuracy_baseline = 0.5
@@ -41,7 +42,7 @@ def main(args):
     X_train, X_test, y_train, y_test = train_test_split(
         X, Y, test_size=0.2, random_state=42)
 
-    clf = RandomForestClassifier(n_estimators=300)
+    clf = RandomForestClassifier(n_estimators=500, criterion="entropy")
 
     clf.fit(X_train, y_train)
 

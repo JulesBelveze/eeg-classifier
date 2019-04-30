@@ -28,8 +28,9 @@ def main(args):
 
     if args.reduce:
         df = remove_correlated(df.drop("labels_jules", axis=1))
-
-    X = df.values
+        X = df.values
+    else:
+        X = df.drop("labels_jules", axis=1).values
 
     if args.smote:
         accuracy_baseline = 0.5

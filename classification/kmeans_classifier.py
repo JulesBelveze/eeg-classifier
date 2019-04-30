@@ -28,8 +28,9 @@ def main(args):
 
     if args.reduce:
         df = remove_correlated(df.drop("labels_jules", axis=1))
-
-    X = df.values
+        X = df.values
+    else:
+        X = df.drop("labels_jules", axis=1).values
 
     if args.smote:
         accuracy_baseline = 0.5
@@ -45,9 +46,9 @@ def main(args):
     Y_hat_train = kmeans.labels_
     Y_hat_test = kmeans.predict(X_test)
 
-    print("accuracy baseline: %f" %accuracy_baseline)
+    print("accuracy baseline: %f" % accuracy_baseline)
     print(" \n--------- Training -----------")
-    print("Accuracy: %f" %accuracy_score(y_train, Y_hat_train))
+    print("Accuracy: %f" % accuracy_score(y_train, Y_hat_train))
     print(confusion_matrix(y_train, Y_hat_train))
     print(" \n----------- Test -------------")
     print("Accuracy: %f" % accuracy_score(y_test, Y_hat_test))
