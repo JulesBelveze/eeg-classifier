@@ -7,10 +7,18 @@ The main objective of this project is to, given EEG data, try to find some patte
 These instructions will get you a copy of the project up and running on your local machine
  
 ### Prerequisites
-
+```
+pip install mne
+pip install imblearn
+```
 ### Installing
+```
+git clone https://github.com/JulesBelveze/AdvancedML.git
+```
 
 ## Usage
+Use `edf_to_csv.py` in order to store all your `.edf` recordings as `.csv` files to be usable for further analysis.
+The file `mne_test.py` was created in order to plot the EEG recordings for hand labeling.
 
 ## Authors
 <ul>
