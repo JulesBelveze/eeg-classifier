@@ -24,11 +24,13 @@ def remove_correlated(df):
 if __name__ == '__main__':
     # DATA PREPARATION
     df = pd.read_csv('../data/features_standardized.csv', sep=';')
+    Y = df.labels_jules.values  # Response
+
     df = remove_correlated(df)
     classNames = ['Bad', 'Good']
 
     C = 2  # Number of classes
-    Y = df.labels_jules.values  # Response
+
     X0 = df[df['labels_jules'] == 0].drop(['labels_jules'], axis=1).values
     X1 = df[df['labels_jules'] == 1].drop(['labels_jules'], axis=1).values
 

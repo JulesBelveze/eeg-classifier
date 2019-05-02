@@ -1,11 +1,13 @@
 import pandas as pd
+import numpy as np
 import warnings
 import argparse
 from sklearn.preprocessing import scale
-from sklearn.cluster import KMeans
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 from imblearn.over_sampling import SMOTE
 import sys
 
@@ -20,7 +22,7 @@ def oversample_smote(X, y):
 
 
 def main(args):
-    df = pd.read_csv('../data/features_by_channel.csv', index_col=['File', 'Segment'], sep=';')
+    df = pd.read_csv('../data/features_all_nochnnels.csv', index_col=['File', 'Segment'], sep=';')
     accuracy_baseline = df['labels_jules'].value_counts()[0] / sum(df['labels_jules'].value_counts())
 
     Y = df['labels_jules'].values
@@ -38,20 +40,26 @@ def main(args):
     X = scale(X)
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, Y, test_size=0.3, random_state=42)
+        X, Y, test_size=0.2, random_state=42)
 
-    kmeans = KMeans(n_clusters=2, random_state=0).fit(X_train)
+    clf = RandomForestClassifier(n_estimators=64,
+                                 min_samples_split=.6,
+                                 min_samples_leaf=.3,
+                                 max_features='auto',
+                                 max_depth=14)
 
-    Y_hat_train = kmeans.labels_
-    Y_hat_test = kmeans.predict(X_test)
+    clf.fit(X_train, y_train)
 
-    # print("accuracy baseline: %f" % accuracy_baseline)
-    # print(" \n--------- Training -----------")
-    # print("Accuracy: %f" % accuracy_score(y_train, Y_hat_train))
-    # print(confusion_matrix(y_train, Y_hat_train))
-    # print(" \n----------- Test -------------")
-    # print("Accuracy: %f" % accuracy_score(y_test, Y_hat_test))
-    # print(confusion_matrix(y_test, Y_hat_test))
+    Y_hat_train = clf.predict(X_train)
+    Y_hat_test = clf.predict(X_test)
+
+    print(accuracy_score(y_train, Y_hat_train))
+    print("accuracy baseline: %f" % accuracy_baseline)
+    print(" \n----------- Test -------------")
+    print("Accuracy: %f" % accuracy_score(y_test, Y_hat_test))
+    print(confusion_matrix(y_test, Y_hat_test))
+
+    print(classification_report(y_test, Y_hat_test, target_names=['bad', 'good']))
 
 
 def parse_arguments():
@@ -68,12 +76,7 @@ def parse_arguments():
         default=False,
         help='Setting to true will upsample the minority class using the SMOTE algorithm'
     )
-    parser.add_argument(
-        '--neighbors',
-        type=int,
-        default=2,
-        help='Specify the number of clusters to use for the KMeans algorithm'
-    )
+
     return parser.parse_intermixed_args()
 
 
