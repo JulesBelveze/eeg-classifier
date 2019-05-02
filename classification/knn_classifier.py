@@ -21,7 +21,7 @@ def oversample_smote(X, y):
 
 
 def main(args):
-    df = pd.read_csv('../data/features_all_nochnnels.csv', index_col=['File', 'Segment'], sep=';')
+    df = pd.read_csv('../data/features_by_channel.csv', index_col=['File', 'Segment'], sep=';')
     accuracy_baseline = df['labels_jules'].value_counts()[0] / sum(df['labels_jules'].value_counts())
 
     Y = df['labels_jules'].values

@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import warnings
 import argparse
 from sklearn.preprocessing import scale
@@ -21,7 +20,7 @@ def oversample_smote(X, y):
 
 
 def main(args):
-    df = pd.read_csv('../data/features_all_nochnnels.csv', index_col=['File', 'Segment'], sep=';')
+    df = pd.read_csv('../data/features_by_channel.csv', index_col=['File', 'Segment'], sep=';')
     accuracy_baseline = df['labels_jules'].value_counts()[0] / sum(df['labels_jules'].value_counts())
 
     Y = df['labels_jules'].values
@@ -39,20 +38,20 @@ def main(args):
     X = scale(X)
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, Y, test_size=0.2, random_state=42)
+        X, Y, test_size=0.3, random_state=42)
 
     kmeans = KMeans(n_clusters=2, random_state=0).fit(X_train)
 
     Y_hat_train = kmeans.labels_
     Y_hat_test = kmeans.predict(X_test)
 
-    print("accuracy baseline: %f" % accuracy_baseline)
-    print(" \n--------- Training -----------")
-    print("Accuracy: %f" % accuracy_score(y_train, Y_hat_train))
-    print(confusion_matrix(y_train, Y_hat_train))
-    print(" \n----------- Test -------------")
-    print("Accuracy: %f" % accuracy_score(y_test, Y_hat_test))
-    print(confusion_matrix(y_test, Y_hat_test))
+    # print("accuracy baseline: %f" % accuracy_baseline)
+    # print(" \n--------- Training -----------")
+    # print("Accuracy: %f" % accuracy_score(y_train, Y_hat_train))
+    # print(confusion_matrix(y_train, Y_hat_train))
+    # print(" \n----------- Test -------------")
+    # print("Accuracy: %f" % accuracy_score(y_test, Y_hat_test))
+    # print(confusion_matrix(y_test, Y_hat_test))
 
 
 def parse_arguments():
@@ -69,7 +68,12 @@ def parse_arguments():
         default=False,
         help='Setting to true will upsample the minority class using the SMOTE algorithm'
     )
-
+    parser.add_argument(
+        '--neighbors',
+        type=int,
+        default=2,
+        help='Specify the number of clusters to use for the KMeans algorithm'
+    )
     return parser.parse_intermixed_args()
 
 
