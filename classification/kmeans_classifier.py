@@ -45,13 +45,13 @@ def main(args):
     Y_hat_train = kmeans.labels_
     Y_hat_test = kmeans.predict(X_test)
 
-    # print("accuracy baseline: %f" % accuracy_baseline)
-    # print(" \n--------- Training -----------")
-    # print("Accuracy: %f" % accuracy_score(y_train, Y_hat_train))
-    # print(confusion_matrix(y_train, Y_hat_train))
-    # print(" \n----------- Test -------------")
-    # print("Accuracy: %f" % accuracy_score(y_test, Y_hat_test))
-    # print(confusion_matrix(y_test, Y_hat_test))
+    print("accuracy baseline: %f" % accuracy_baseline)
+    print(" \n--------- Training -----------")
+    print("Accuracy: %f" % accuracy_score(y_train, Y_hat_train))
+    print(confusion_matrix(y_train, Y_hat_train))
+    print(" \n----------- Test -------------")
+    print("Accuracy: %f" % accuracy_score(y_test, Y_hat_test))
+    print(confusion_matrix(y_test, Y_hat_test))
 
 
 def parse_arguments():

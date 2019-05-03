@@ -42,7 +42,7 @@ def main(args):
 
     X = scale(X)
 
-    print("Baseline accuracy: %".format(accuracy_baseline))
+    print("Baseline accuracy: %f" % accuracy_baseline)
 
     if args.CV:
         K = 5

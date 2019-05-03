@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 28 11:03:58 2019
-
-@author: mirab
-"""
-# mne.open_docs() to open the library
-
 import mne.io
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -34,8 +26,6 @@ for file in range(1, 32):
         fig = raw.plot(start=count_plot, duration=interval_plot, show=False);
         path = '/home/marina/Documents/DTU/Advanced machine learning/Project/Data/eeg_plots/' + str(file) + ' segment ' + str(segment) + '.png'
         fig.savefig(path, quality=1)  # save the figure to file
-        # fig.clf()
-        # plt.close('all')
         print(str(file) + ' segment ' + str(segment) + ' from ' + str(t_start) + ' to ' + str(t_end))
 
         count_plot += interval_plot
