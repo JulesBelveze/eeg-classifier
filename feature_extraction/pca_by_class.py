@@ -99,32 +99,3 @@ if __name__ == '__main__':
         plt.ylabel('PC{0}'.format(j + 1))
         # Output result to screen
         plt.show()
-
-'''
-#two Principal PCA projection
-V = V.T
-# Project the centered data onto principal component space
-Z = x @ V
-
-
-# Indices of the principal components to be plotted
-i = 0
-j = 1
-
-# Plot PCA of the data
-f = figure()
-title('EEG data: PCA')
-
-#Z = array(Z)
-for c in range(C):
-    # select indices belonging to class c:
-    class_mask = y==c
-    plot(Z[class_mask,i], Z[class_mask,j], 'o')
-    
-legend(classNames)
-xlabel('PC{0}'.format(i+1))
-ylabel('PC{0}'.format(j+1))
-
-# Output result to screen
-show()
-'''
