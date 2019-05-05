@@ -13,7 +13,7 @@ pip install imblearn
 ```
 ### Installing
 ```
-git clone https://github.com/JulesBelveze/AdvancedML.git
+git clone https://github.com/JulesBelveze/eeg-classifier.git
 ```
 
 ## Usage
