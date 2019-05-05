@@ -5,43 +5,34 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
-from sklearn.utils import shuffle
+from imblearn.over_sampling import SMOTE
 import sys
 
-sys.path.insert(0, "../dimension_reduction/")
-from dimension_reduction import bonferonni_corr
+sys.path.insert(0, "../feature_extraction/")
+from pca_by_class import remove_correlated
 
 
-def oversample(df):
-    count = df['labels_jules'].value_counts()
-    max_count = max(count)
-
-    df_bad = df[df['labels_jules'] == 0]
-    df_good_oversampled = df[df['labels_jules'] == 1].sample(n=max_count, replace=True)
-    df_oversampled = pd.concat([df_bad, df_good_oversampled])
-
-    return shuffle(df_oversampled)
+def oversample_smote(X, y):
+    sm = SMOTE(random_state=2)
+    X, y = sm.fit_sample(X, y)
+    return X, y
 
 
 if __name__ == '__main__':
     df = pd.read_csv("../data/features_all_nochnnels.csv", index_col=['File', 'Segment'], sep=";")
-    df = oversample(df)
 
     Y = df['labels_jules'].values
-    X = df.drop('labels_jules', axis=1).values
+    df = remove_correlated(df.drop("labels_jules", axis=1))
+    X = df.values
 
-    # getting the most significant features and removing the others
-    features_to_include = bonferonni_corr(X, Y)
-    columns_to_include = df.columns[features_to_include].values
-    X = df[columns_to_include].values
+    X, Y = oversample_smote(X, Y)
     X = scale(X)
 
     # classification models
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=42)
     clf = LogisticRegression(random_state=0, solver='lbfgs', multi_class='multinomial')
     clf.fit(X_train, Y_train)
     Y_hat = clf.predict(X_test)
-
 
     # printing metrics
     target_names = ['bad', 'good']
