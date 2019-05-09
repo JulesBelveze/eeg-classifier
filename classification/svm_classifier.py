@@ -24,10 +24,32 @@ def oversample_smote(X, y):
     return X, y
 
 
+def downsample(X, y):
+    count_good = sum(y)
+    count_bad = len(y) - count_good
+    counts = [count_bad, count_good]
+
+    good_indexes = [i for i, elt in enumerate(y) if elt == 1]
+    bad_indexes = [i for i, elt in enumerate(y) if elt == 0]
+
+    if count_bad > count_good:
+        bad_indexes = bad_indexes[:count_good]
+        X_bad = X[bad_indexes]
+        X_good = X[good_indexes]
+    else:
+        good_indexes = good_indexes[:count_bad]
+        X_good = X[good_indexes]
+        X_bad = X[bad_indexes]
+
+    X = np.concatenate((X_good, X_bad))
+    y = np.concatenate((np.ones(min(counts)), np.zeros(min(counts))))
+
+    return X, y
+
+
 def main(args):
     df = pd.read_csv('../data/features_by_channel.csv', index_col=['File', 'Segment'], sep=';')
     accuracy_baseline = df['labels_jules'].value_counts()[0] / sum(df['labels_jules'].value_counts())
-
     Y = df['labels_jules'].values
 
     if args.reduce:
@@ -36,13 +58,15 @@ def main(args):
     else:
         X = df.drop("labels_jules", axis=1).values
 
-    if args.smote:
-        accuracy_baseline = 0.5
-        X, Y = oversample_smote(X, Y)
-
     X = scale(X)
 
-    print("Baseline accuracy: %f" % accuracy_baseline)
+    if args.down:
+        X, Y = downsample(X, Y)
+        accuracy_baseline = sum(Y) / len(Y)
+
+    if args.smote:
+        accuracy_baseline = .5
+    print("\nBaseline accuracy: %f" % accuracy_baseline)
 
     if args.CV:
         K = 5
@@ -53,6 +77,9 @@ def main(args):
         for train_index, test_index in KF.split(X):
             X_train = X[train_index, :]
             Y_train = Y[train_index]
+
+            if args.smote:
+                X_train, Y_train = oversample_smote(X_train, Y_train)
 
             X_test = X[test_index, :]
             Y_test = Y[test_index]
@@ -78,14 +105,20 @@ def main(args):
         X_train, X_test, y_train, y_test = train_test_split(
             X, Y, test_size=0.3, random_state=42)
 
+        if args.smote:
+            X_train, y_train = oversample_smote(X_train, y_train)
+
         clf = SVC()
         clf.fit(X_train, y_train)
 
+        Y_hat_train = clf.predict(X_train)
         Y_hat = clf.predict(X_test)
 
-        print(" \n-------------- Test ---------------")
+        print("\n-------------- Train --------------")
+        print("Accuracy: %f" % accuracy_score(y_train, Y_hat_train))
+        print("-------------- Test ---------------")
         print("Accuracy: %f" % accuracy_score(y_test, Y_hat))
-        print(classification_report(y_test, Y_hat, target_names=['bad', 'good']))
+        print("\n" + classification_report(y_test, Y_hat, target_names=['bad', 'good']))
 
         plt.figure()
         sns.heatmap(confusion_matrix(y_test, Y_hat),
@@ -115,6 +148,12 @@ def parse_arguments():
         type=bool,
         default=False,
         help='Setting to true will proceed to a cross-validation'
+    )
+    parser.add_argument(
+        '--down',
+        type=bool,
+        default=False,
+        help='Setting to true will proceed to downsampling of the majority class'
     )
 
     return parser.parse_intermixed_args()
