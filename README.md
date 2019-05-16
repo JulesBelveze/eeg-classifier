@@ -1,4 +1,4 @@
-# AdvancedML
+# Quality assessment of EEG recordings
 Repository of the final project for the course <i>02460 - Advanced Machine Learning</i> at the <i>Technical University of Denmark (DTU)</i> 
 
 The main objective of this project is to, given EEG data, try to find some patterns while applying some classification tools, that can help in some manner to make a faster and easier diagnosis of brain diseases in underdeveloped countries. 
